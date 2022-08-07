@@ -3,7 +3,7 @@ export class User {
     constructor(userData) {
         this.id = userData.id;
         this.name = userData.name;
-        this.userBooking = [];
+        this.bookings = [];
         this.rooms = [];
         this.totalSpent = 0;
     }
@@ -33,7 +33,15 @@ export class User {
     }
 
     setTotalSpent() {
-        this.totalSpent = this.rooms.reduce((acc, room) => (acc + room.costPerNight), 0)
+        this.totalSpent = this.rooms.reduce((acc, room) => (acc + room.costPerNight), 0).toFixed(2)
+    }
+
+    getPastBookings(date) {
+        return this.bookings.filter(booking => booking.date < date);
+    }
+
+    getUpcomingBookings(date) {
+        return this.bookings.filter(booking => booking.date >= date)
     }
 
 }
