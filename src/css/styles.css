@@ -1,6 +1,77 @@
- /* body {
-   background-image:var(#image)
- } */
- /* #image{
+ html,
+ body {
+   background-image: url('/src/images/luxury.png');
+   /* height: 100%;
+   width: 100%; */
+   margin: 0;
+   font-family: 'Courier New', Courier, monospace;
+ }
 
- } */
+ .booking-grid {
+   display: flex;
+   flex-wrap: wrap;
+ }
+
+ .bookings {
+   width: 20%;
+   background-color: rgb(216, 195, 157);
+   opacity: 0.7;
+   border: 15px;
+   color: black;
+ }
+
+ form {
+   display: flex;
+   flex-direction: row;
+   flex-direction: var(150px);
+ }
+
+ .welcome-message {
+   display: flex;
+   justify-items: center;
+   font-family: fantasy;
+   background-color: rgb(189, 227, 39);
+   height: 50px;
+   right: 20%;
+   opacity: 0.8;
+   color: black;
+   flex-direction: row;
+   width: 20%;
+ }
+
+ #title {
+   font-family: Verdana, Geneva, Tahoma, sans-serif;
+   width: 20%;
+   background-color: rgb(88, 57, 165);
+   border: 15px;
+   color: black;
+ }
+
+ #roomTypeDropDown {
+   position: absolute;
+   width: 20%;
+   border: 20px;
+   border-color: blue;
+   background-color: rgba(239, 236, 244, 0.947);
+   border: 15px;
+   color: black;
+   right: 80px;
+   top: 20%;
+ }
+
+ .total-rooms-cost {
+   background-color: aliceblue;
+   width: 20%;
+ }
+
+ .hidden {
+   visibility: hidden;
+ }
+
+ #searchRooms {
+   position: absolute;
+   width: 5%;
+   height: 20px;
+   top: 19.75%;
+   left: 70%;
+ }

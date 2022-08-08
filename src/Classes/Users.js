@@ -6,6 +6,8 @@ export class User {
         this.bookings = [];
         this.rooms = [];
         this.totalSpent = 0;
+        this.filteredBookings = [];
+        this.filteredRooms = [];
     }
 
     setBookings(bookings) {
@@ -42,6 +44,14 @@ export class User {
 
     getUpcomingBookings(date) {
         return this.bookings.filter(booking => booking.date >= date)
+    }
+
+    setFilteredBookings(bookings) {
+        this.filteredBookings = bookings;
+    }
+
+    setFilteredRooms(rooms) {
+        this.filteredRooms = rooms;
     }
 
 }
