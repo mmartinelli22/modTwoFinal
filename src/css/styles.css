@@ -43,7 +43,7 @@
    position: inherit;
    font-family: Verdana, Geneva, Tahoma, sans-serif;
    width: 20%;
-   background-color: rgb(156, 149, 171);
+   background-color: rgb(90, 43, 5);
    color: black;
  }
 
@@ -51,7 +51,6 @@
    position: absolute;
    width: 20%;
    border: 20px;
-   border-color: blue;
    background-color: rgba(239, 236, 244, 0.947);
    border: 15px;
    color: black;
@@ -98,7 +97,7 @@
    position: absolute;
    left: -1px;
    top: -5px;
-   background-color: aqua;
+   background-color: rgb(170, 103, 37);
    width: 290px;
 
  }
@@ -114,7 +113,7 @@
  }
 
  .login-text {
-   background-color: rgba(127, 195, 255, 0.345);
+   background-color: rgba(185, 99, 19, 0.345);
    background-image: unset
  }
 
@@ -144,12 +143,13 @@
  #birthday {
    position: absolute;
    top: 10%;
-   left: 75%;
    display: none;
+   background-color: antiquewhite;
  }
 
  #booking-search {
    position: absolute;
    top: 10%;
-   left: 85%;
+   left: 10%;
+   background-color: beige;
  }

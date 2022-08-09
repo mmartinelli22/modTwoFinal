@@ -1,4 +1,3 @@
-// {"id":"5fwrgu4i7k55hl6sz","userID":9,"date":"2022/04/22","roomNumber":15}
 export class User {
     constructor(userData) {
         this.id = userData.id;
@@ -38,20 +37,15 @@ export class User {
         this.totalSpent = this.rooms.reduce((acc, room) => (acc + room.costPerNight), 0).toFixed(2)
     }
 
-    getPastBookings(date) {
-        return this.bookings.filter(booking => booking.date < date);
-    }
-
-    getUpcomingBookings(date) {
-        return this.bookings.filter(booking => booking.date >= date)
-    }
-
     setFilteredBookings(bookings) {
         this.filteredBookings = bookings;
     }
 
     setFilteredRooms(rooms) {
         this.filteredRooms = rooms;
+    }
+    addFilteredRoom(room) {
+        this.filteredRooms.push(room);
     }
 
     removeFilteredRoom(roomNumber) {
