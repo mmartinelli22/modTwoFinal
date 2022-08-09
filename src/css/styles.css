@@ -1,20 +1,21 @@
  html,
  body {
    background-image: url('/src/images/luxury.png');
-   /* height: 100%;
-   width: 100%; */
+   height: 100%;
    margin: 0;
+   width: 100%;
    font-family: 'Courier New', Courier, monospace;
  }
 
  .booking-grid {
    display: flex;
    flex-wrap: wrap;
+   opacity: 0.8;
  }
 
  .bookings {
    width: 20%;
-   background-color: rgb(216, 195, 157);
+   background-color: aliceblue;
    opacity: 0.7;
    border: 15px;
    color: black;
@@ -26,24 +27,23 @@
    flex-direction: var(150px);
  }
 
- .welcome-message {
-   display: flex;
-   justify-items: center;
+ h2 {
+   position: absolute;
    font-family: fantasy;
-   background-color: rgb(189, 227, 39);
+   background-color: rgb(232, 219, 208);
    height: 50px;
-   right: 20%;
+   right: 50%;
    opacity: 0.8;
-   color: black;
-   flex-direction: row;
    width: 20%;
+   top: 1%;
+   font-size: 40px;
  }
 
  #title {
+   position: inherit;
    font-family: Verdana, Geneva, Tahoma, sans-serif;
    width: 20%;
-   background-color: rgb(88, 57, 165);
-   border: 15px;
+   background-color: rgb(90, 43, 5);
    color: black;
  }
 
@@ -51,11 +51,10 @@
    position: absolute;
    width: 20%;
    border: 20px;
-   border-color: blue;
    background-color: rgba(239, 236, 244, 0.947);
    border: 15px;
    color: black;
-   right: 80px;
+   right: 120px;
    top: 20%;
  }
 
@@ -73,5 +72,84 @@
    width: 5%;
    height: 20px;
    top: 19.75%;
+   left: 91%;
+ }
+
+ #currentBookings {
+   position: relative;
+ }
+
+ #filteredRooms {
+   margin: 0;
+   background-color: aliceblue;
+   opacity: 0.7;
+   width: 288px;
+ }
+
+ #show-bookings {
+   position: absolute;
+   left: 40%;
+   top: 100px;
+   margin: 0;
+ }
+
+ #bookingsMessage {
+   position: absolute;
+   left: -1px;
+   top: -5px;
+   background-color: rgb(170, 103, 37);
+   width: 290px;
+
+ }
+
+ #showRooms {
+   position: absolute;
+   font-size: 20px;
+   background-color: white;
+   top: 40%;
+   width: 30%;
    left: 70%;
+   opacity: 0.7;
+ }
+
+ .login-text {
+   background-color: rgba(185, 99, 19, 0.345);
+   background-image: unset
+ }
+
+ #password {
+   position: relative;
+   height: 30px;
+   width: 20%;
+ }
+
+ #userNameInput {
+   position: relative;
+   width: 20%;
+   height: 30px;
+ }
+
+ #loginFormSubmit {
+   position: relative;
+   height: 30px;
+   width: 15%;
+ }
+
+ #mainLoginHolder {
+   position: absolute;
+   top: 9px;
+ }
+
+ #birthday {
+   position: absolute;
+   top: 10%;
+   display: none;
+   background-color: antiquewhite;
+ }
+
+ #booking-search {
+   position: absolute;
+   top: 10%;
+   left: 10%;
+   background-color: beige;
  }
