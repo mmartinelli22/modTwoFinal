@@ -12,6 +12,16 @@ let currentUser;
 let roomTypeDropDown = document.querySelector('#roomTypeDropDown')
 let searchRooms = document.querySelector('#searchRooms')
 let showRooms = document.querySelector('#showRooms')
+let bookingsInfo = document.querySelector('#show-bookings')
+let hideGrid = document.querySelector('.grid')
+let bookingGrid = document.querySelector('.booking-grid')
+let ourRooms = document.querySelector('.filteredRooms')
+let projectTitle = document.querySelector('#title')
+let searchSubmit = document.querySelector('#booking-search')
+let loginForm = document.querySelector('#login')
+let welcomeMessage = document.querySelector('#welcomeMessage')
+let logOut = document.querySelector('#logOut')
+let calendar = document.querySelector('#birthday')
 const setCurrentUserBookings = (user) => {
     const userBookings = bookings.filter(booking => booking.userID === user.id);
     user.setBookings(userBookings);
@@ -22,14 +32,16 @@ const setCurrentUserRooms = (user) => {
     console.log({ currentUserRooms });
     user.setRooms(currentUserRooms);
 }
-const functionToRemoveAfterLoginWorks = () => {
-    currentUser = users.find(x => !!x);
+const buildAuthPage = (id = 3) => {
+    currentUser = users.find(user => user.id === id);
     setCurrentUserBookings(currentUser);
     setCurrentUserRooms(currentUser);
 }
 const userPromise = fetchApiData('http://localhost:3001/api/v1/customers')
 const theseRooms = fetchApiData('http://localhost:3001/api/v1/rooms')
 const userBookings = fetchApiData('http://localhost:3001/api/v1/bookings')
+
+
 Promise.all([
     userPromise,
     theseRooms,
@@ -47,16 +59,13 @@ Promise.all([
         const currentBooking = new Booking(val);
         bookings.push(currentBooking);
     });
-    functionToRemoveAfterLoginWorks();
-    getUsersCost()
-    showBookings()
-    greeting()
+    removeShownBookings();
 })
+
 // An example of how you tell webpack to use an image (also need to link to it in the index.html)
 import './images/luxury.png'
 const getUsersCost = () => {
     let roomCost = document.querySelector('.total-rooms-cost')
-    console.log(currentUser)
     roomCost.innerHTML = '';
     currentUser.setTotalSpent()
     roomCost.innerHTML = `Your current cost is $${currentUser.totalSpent}`
@@ -70,9 +79,29 @@ const showBookings = () => {
         userBookings.innerHTML += '</ol>'
     });
 }
-const greeting = () => {
+const greeting = (user) => {
     let greeting = document.querySelector('.welcome-message');
-    greeting.innerHTML = `Hello,${currentUser.name.split(" ")[0]}`
+    greeting.innerHTML = `Hello,${user.name.split(" ")[0]}`
+}
+const removeShownBookings = () => {
+    hide(searchSubmit);
+    hide(projectTitle);
+    hide(logOut);
+    hide(searchRooms)
+    hide(roomTypeDropDown)
+    calendar.style.display = "none";
+    let roomCost = document.querySelector('.total-rooms-cost');
+    roomCost.innerHTML = '';
+    let greeting = document.querySelector('.welcome-message');
+    greeting.innerHTML = ``;
+    let userBookings = document.querySelector('.bookings');
+    userBookings.innerHTML = '';
+    show(loginForm)
+    let showBookings = document.querySelector('#birthday')
+    let storedBookings = document.querySelector('#show-bookings')
+    showBookings.innerHTML = ``;
+    storedBookings.innerHTML = ``;
+    showRooms.innerHTML = ``;
 }
 const showFilteredBookings = (event) => {
     event.preventDefault();
@@ -88,18 +117,17 @@ const showFilteredBookings = (event) => {
     })
 
     currentUser.filteredBookings = newBookings;
-    console.log('>>>>>', newBookings);
     if (!currentUser.filteredBookings.length) {
         storedBookings.innerText = 'Sorry, there are no rooms available on that day.'
-        console.log(storedBookings.innerText)
     } else {
         storedBookings.innerHTML = '<ol> <p1 id="bookingsMessage">Possible bookings</p1>';
         newBookings.forEach(booking => {
-            storedBookings.innerHTML += `<li id = "filteredRooms">${booking.date}: Room ${booking.roomNumber}</li>`;
+            storedBookings.innerHTML += `<li  id = "filteredRooms">${booking.date}: Room ${booking.roomNumber}</li>`;
         })
         storedBookings.innerHTML += '</ol>';
-        show(roomTypeDropDown)
+
         show(searchRooms)
+        show(roomTypeDropDown)
     }
 }
 function show(element) {
@@ -144,7 +172,7 @@ const buildShowRooms = (roomsToBuild) => {
     }, '<ol>')
     showRooms.innerHTML + `</ol>`;
     roomsToBuild.forEach((availableRoom) => {
-        const roomButton = document.querySelector(`#bookingsButton${availableRoom.number}`)
+        let roomButton = document.querySelector(`#bookingsButton${availableRoom.number}`)
         roomButton.addEventListener('click', roomButtonHandler)
     })
 }
@@ -165,6 +193,50 @@ const filterBookingsByRoom = (event) => {
     }
 
 }
+const giveDisplay = () => {
+    calendar.style.display = "initial";
+}
+const checkCustomerCredentials = (event) => {
+    event.preventDefault();
+    let customerLogin;
+    customerLogin = new FormData(event.target);
+    if (checkCustomerIsValid(customerLogin.get('username')) && customerLogin.get('password') === 'overlook2021') {
+        fetch(`http://localhost:3001/api/v1/customers/${checkCustomerIsValid(customerLogin.get('username'))}`)
+            .then(response => response.json())
+            .then(response => {
+                let newCalendar = document.querySelector('#birthday')
+                buildAuthPage(response.id);
+                showBookings()
+                greeting(new User(response));
+                show(bookingsInfo, hideGrid, bookingGrid, ourRooms)
+                getUsersCost();
+                showBookings();
+                giveDisplay(newCalendar)
+                show(projectTitle);
+                show(searchSubmit);
+                show(bookingsInfo);
+                show(welcomeMessage)
+                hide(loginForm);
+                show(logOut)
 
+
+            })
+            .catch(error => console.log('ERROR: ', error));
+    } else {
+        window.alert('Invalid Username, or Password');
+        event.target.reset();
+    }
+}
+const checkCustomerIsValid = (userName) => {
+    let customer = userName.substring(0, 8);
+    let customerId = userName.substring(8);
+    if (customer === 'customer' && parseInt(customerId) < 51) {
+        return customerId;
+    } else {
+        return false;
+    };
+}
 searchRooms.addEventListener('click', filterBookingsByRoom);
 searchButton.addEventListener('click', showFilteredBookings);
+document.getElementById('login').addEventListener('submit', checkCustomerCredentials);
+logOut.addEventListener('click', removeShownBookings)

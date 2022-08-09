@@ -27,21 +27,20 @@
    flex-direction: var(150px);
  }
 
- .welcome-message {
-   display: flex;
-   justify-items: center;
+ h2 {
+   position: absolute;
    font-family: fantasy;
-   background-color: rgb(122, 69, 25);
+   background-color: rgb(232, 219, 208);
    height: 50px;
-   right: 20%;
+   right: 50%;
    opacity: 0.8;
-   color: black;
-   flex-direction: row;
    width: 20%;
+   top: 1%;
+   font-size: 40px;
  }
 
  #title {
-   position: relative;
+   position: inherit;
    font-family: Verdana, Geneva, Tahoma, sans-serif;
    width: 20%;
    background-color: rgb(156, 149, 171);
@@ -56,7 +55,7 @@
    background-color: rgba(239, 236, 244, 0.947);
    border: 15px;
    color: black;
-   right: 80px;
+   right: 120px;
    top: 20%;
  }
 
@@ -74,7 +73,7 @@
    width: 5%;
    height: 20px;
    top: 19.75%;
-   left: 70%;
+   left: 91%;
  }
 
  #currentBookings {
@@ -112,4 +111,45 @@
    width: 30%;
    left: 70%;
    opacity: 0.7;
+ }
+
+ .login-text {
+   background-color: rgba(127, 195, 255, 0.345);
+   background-image: unset
+ }
+
+ #password {
+   position: relative;
+   height: 30px;
+   width: 20%;
+ }
+
+ #userNameInput {
+   position: relative;
+   width: 20%;
+   height: 30px;
+ }
+
+ #loginFormSubmit {
+   position: relative;
+   height: 30px;
+   width: 15%;
+ }
+
+ #mainLoginHolder {
+   position: absolute;
+   top: 9px;
+ }
+
+ #birthday {
+   position: absolute;
+   top: 10%;
+   left: 75%;
+   display: none;
+ }
+
+ #booking-search {
+   position: absolute;
+   top: 10%;
+   left: 85%;
  }

@@ -9,6 +9,16 @@
 </head>
 
 <body>
+  <div id="mainLoginHolder">
+    <form id="login">
+      <h1 class="login-text">Welcome to Overlook!</h1>
+      <label for="userNameInput" class="user-name-label "></label>
+      <input type="text" name="username" id="userNameInput" class="login-form-field" placeholder="Username" required>
+      <label for="password" aria-describedby="password" class="password-label "></label>
+      <input class="login-field" aria-label="passwordLabel" type="password" name="password" id="password" required>
+      <input type="submit" value="Login" id="loginFormSubmit">
+    </form>
+  </div>
   <div class='store-bookings'>
     <h3 id='show-bookings'></h3>
   </div>
@@ -20,8 +30,8 @@
       <div class="search-container">
         <form>
           <label for='search-submit'>
-            <button class="search-submit">Search for bookings!</button>
-            <input type="date" id="birthday" name="birthday">
+            <input aria-describedby="calendarInput" class='calendar' type="date" id="birthday" name="birthday">
+            <button id="booking-search" class="search-submit">Search for bookings!</button>
           </label>
         </form>
       </div>
@@ -29,7 +39,7 @@
       <div class="greetings">
         <div class="card-wrapper">
           <div class="welcome-message-and-total-cost">
-            <h2 class="welcome-message"></h2>
+            <h2 id="welcomeMessage" class="welcome-message hidden"></h2>
             <p class="total-rooms-cost"></p>
           </div>
         </div>
@@ -42,7 +52,6 @@
   </div>
   <div class='drop-down'>
     <label for="roomTypeDropDown"></label>
-    <button class='hidden' id="searchRooms">Search</button>
     <select class="hidden" type="dropdown" id="roomTypeDropDown" name="type" class="room-details">
       <option id='dropDown' disabled selected>Choose a Room Type</option>
       <option value="residential suite">Residential Suite</option>
@@ -50,11 +59,13 @@
       <option value="single room">Single Room</option>
       <option value="junior suite">Junior Suite</option>
     </select>
+    <button class='hidden' id="searchRooms">Search</button>
   </div>
   <label for="showRooms"></label>
   <div class='filteredRooms'>
     <h1 id='showRooms'></h1>
   </div>
+  <button id="logOut" aria-describedby="logOutButton">Log Out</button>
 
   <!-- Do not include the scripts.js or class files here - it is done by the webpack server -->
   <script src="bundle.js"></script>
