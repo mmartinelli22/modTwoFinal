@@ -54,4 +54,8 @@ export class User {
         this.filteredRooms = rooms;
     }
 
+    removeFilteredRoom(roomNumber) {
+        this.filteredRooms = this.filteredRooms.filter(room => room.number !== roomNumber)
+    }
+
 }

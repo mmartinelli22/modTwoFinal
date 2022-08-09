@@ -11,6 +11,7 @@ let bookings = [];
 let currentUser;
 let roomTypeDropDown = document.querySelector('#roomTypeDropDown')
 let searchRooms = document.querySelector('#searchRooms')
+let showRooms = document.querySelector('#showRooms')
 const setCurrentUserBookings = (user) => {
     const userBookings = bookings.filter(booking => booking.userID === user.id);
     user.setBookings(userBookings);
@@ -25,7 +26,6 @@ const functionToRemoveAfterLoginWorks = () => {
     currentUser = users.find(x => !!x);
     setCurrentUserBookings(currentUser);
     setCurrentUserRooms(currentUser);
-    console.log({ currentUser });
 }
 const userPromise = fetchApiData('http://localhost:3001/api/v1/customers')
 const theseRooms = fetchApiData('http://localhost:3001/api/v1/rooms')
@@ -57,16 +57,18 @@ import './images/luxury.png'
 const getUsersCost = () => {
     let roomCost = document.querySelector('.total-rooms-cost')
     console.log(currentUser)
+    roomCost.innerHTML = '';
     currentUser.setTotalSpent()
     roomCost.innerHTML = `Your current cost is $${currentUser.totalSpent}`
 }
 const showBookings = () => {
     let userBookings = document.querySelector('.bookings');
-    userBookings.innerHTML = '<ol> Your current bookings are'
+    userBookings.innerHTML = '';
+    userBookings.innerHTML = `<h1>Your current bookings are</h1><ol>`
     currentUser.bookings.forEach(booking => {
-        userBookings.innerHTML += `<li>${booking.date}: Room ${booking.roomNumber}</li>`;
+        userBookings.innerHTML += `<li id ='currentBookings'>${booking.date}: Room ${booking.roomNumber}</li>`;
+        userBookings.innerHTML += '</ol>'
     });
-    userBookings.innerHTML += '</ol>'
 }
 const greeting = () => {
     let greeting = document.querySelector('.welcome-message');
@@ -84,17 +86,18 @@ const showFilteredBookings = (event) => {
         const bookingDateString = buildDateString(bookingDateValue);
         return bookingDateString === calendarDateString
     })
+
     currentUser.filteredBookings = newBookings;
-    if (newBookings === []) {
+    console.log('>>>>>', newBookings);
+    if (!currentUser.filteredBookings.length) {
         storedBookings.innerText = 'Sorry, there are no rooms available on that day.'
         console.log(storedBookings.innerText)
     } else {
-        console.log(newBookings)
-        storedBookings.innerHTML = '<ol>';
+        storedBookings.innerHTML = '<ol> <p1 id="bookingsMessage">Possible bookings</p1>';
         newBookings.forEach(booking => {
-            storedBookings.innerHTML += `<li>${booking.date}: Room ${booking.roomNumber}</li>`;
+            storedBookings.innerHTML += `<li id = "filteredRooms">${booking.date}: Room ${booking.roomNumber}</li>`;
         })
-        storedBookings.innerHTML += '</ol>'
+        storedBookings.innerHTML += '</ol>';
         show(roomTypeDropDown)
         show(searchRooms)
     }
@@ -106,15 +109,61 @@ function hide(element) {
     element.classList.add('hidden')
 }
 
+const roomButtonHandler = (event) => {
+    const idPrefix = 'bookingsButton';
+    const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
+    currentUser.removeFilteredRoom(roomNumber);
+    buildShowRooms(currentUser.filteredRooms);
+    addBookingByRoomNumber(roomNumber);
+    addRoomByRoomNumber(roomNumber);
+}
+
+const addRoomByRoomNumber = (roomNumber) => {
+    const roomToAdd = rooms.find((room) => room.number === roomNumber);
+    currentUser.addRoom(roomToAdd);
+    getUsersCost();
+}
+
+const addBookingByRoomNumber = (roomNumber) => {
+    const bookingToAdd = bookings.find((booking) => booking.roomNumber === roomNumber);
+    currentUser.addBooking(bookingToAdd);
+    showBookings();
+}
+
+const buildShowRooms = (roomsToBuild) => {
+    showRooms.innerHTML = roomsToBuild.reduce((acc, availableRoom) => {
+        return `${acc}
+            <li id="${availableRoom.number}">Number of beds:${availableRoom.numBeds}
+            Amount:${availableRoom.costPerNight},
+            Type of Room:${availableRoom.roomType},
+            Size of Beds:${availableRoom.bedSize},
+            Does it have a bidet?:${availableRoom.bidet},
+            Room Number:${availableRoom.number}
+            </li><button id ="bookingsButton${availableRoom.number}">Add to bookings?</button>
+        `
+    }, '<ol>')
+    showRooms.innerHTML + `</ol>`;
+    roomsToBuild.forEach((availableRoom) => {
+        const roomButton = document.querySelector(`#bookingsButton${availableRoom.number}`)
+        roomButton.addEventListener('click', roomButtonHandler)
+    })
+}
+
 const filterBookingsByRoom = (event) => {
     event.preventDefault();
+    showRooms.innerHTML = '';
     const currentRoom = roomTypeDropDown.value ?? '';
     const filteredRooms = rooms.filter(room => currentUser.filteredBookings
         .some(booking => booking.roomNumber === room.number))
         .filter(room => room.roomType === currentRoom);
-    console.log({ filteredRooms });
     currentUser.setFilteredRooms(filteredRooms);
-    console.log({ event })
+    console.log({ filteredRooms });
+    if (currentUser.filteredRooms.length > 0) {
+        buildShowRooms(currentUser.filteredRooms);
+    } else {
+        showRooms.innerHTML = `Sorry, we don't have any rooms of that type that day.`
+    }
+
 }
 
 searchRooms.addEventListener('click', filterBookingsByRoom);

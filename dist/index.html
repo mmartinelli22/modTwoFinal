@@ -9,6 +9,9 @@
 </head>
 
 <body>
+  <div class='store-bookings'>
+    <h3 id='show-bookings'></h3>
+  </div>
   <div class="grid">
     <div class='user-info'>
       <div id='title'>
@@ -16,10 +19,13 @@
       </div>
       <div class="search-container">
         <form>
-          <button class="search-submit">Search for bookings!</button>
-          <input type="date" id="birthday" name="birthday">
+          <label for='search-submit'>
+            <button class="search-submit">Search for bookings!</button>
+            <input type="date" id="birthday" name="birthday">
+          </label>
         </form>
       </div>
+      <label for='card-wrapper'></label>
       <div class="greetings">
         <div class="card-wrapper">
           <div class="welcome-message-and-total-cost">
@@ -28,13 +34,10 @@
           </div>
         </div>
       </div>
-      <div class='store-bookings'>
-        <h3 id='show-bookings'></h3>
-      </div>
+
     </div>
   </div>
   <div class='booking-grid'>
-    <!-- <img class='container' src="./images/luxury.png" alt="turing logo"> -->
     <p1 class='bookings' id='userBookings'></p1>
   </div>
   <div class='drop-down'>
@@ -47,6 +50,10 @@
       <option value="single room">Single Room</option>
       <option value="junior suite">Junior Suite</option>
     </select>
+  </div>
+  <label for="showRooms"></label>
+  <div class='filteredRooms'>
+    <h1 id='showRooms'></h1>
   </div>
 
   <!-- Do not include the scripts.js or class files here - it is done by the webpack server -->
