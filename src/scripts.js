@@ -2,8 +2,8 @@ import { fetchApiData } from './apiCalls';
 import { Booking } from './Classes/Booking';
 import { Room } from './Classes/Room';
 import { User } from './Classes/Users';
-// An example of how you tell webpack to use a CSS (SCSS) file
 import './css/styles.css';
+import './images/luxury.png';
 let searchButton = document.querySelector('.search-submit');
 let users = [];
 let rooms = [];
@@ -59,11 +59,8 @@ Promise.all([
         const currentBooking = new Booking(val);
         bookings.push(currentBooking);
     });
-    removeShownBookings();
+    removePageInfo();
 })
-
-// An example of how you tell webpack to use an image (also need to link to it in the index.html)
-import './images/luxury.png'
 const getUsersCost = () => {
     let roomCost = document.querySelector('.total-rooms-cost')
     roomCost.innerHTML = '';
@@ -83,7 +80,7 @@ const greeting = (user) => {
     let greeting = document.querySelector('.welcome-message');
     greeting.innerHTML = `Hello,${user.name.split(" ")[0]}`
 }
-const removeShownBookings = () => {
+const removePageInfo = () => {
     hide(searchSubmit);
     hide(projectTitle);
     hide(logOut);
@@ -93,7 +90,7 @@ const removeShownBookings = () => {
     let roomCost = document.querySelector('.total-rooms-cost');
     roomCost.innerHTML = '';
     let greeting = document.querySelector('.welcome-message');
-    greeting.innerHTML = ``;
+    greeting.style.display = "none";
     let userBookings = document.querySelector('.bookings');
     userBookings.innerHTML = '';
     show(loginForm)
@@ -195,13 +192,15 @@ const filterBookingsByRoom = (event) => {
 }
 const giveDisplay = () => {
     calendar.style.display = "initial";
+    let greeting = document.querySelector('.welcome-message');
+    greeting.style.display = "initial"
 }
 const checkCustomerCredentials = (event) => {
     event.preventDefault();
     let customerLogin;
     customerLogin = new FormData(event.target);
-    if (checkCustomerIsValid(customerLogin.get('username')) && customerLogin.get('password') === 'overlook2021') {
-        fetch(`http://localhost:3001/api/v1/customers/${checkCustomerIsValid(customerLogin.get('username'))}`)
+    if (checkCustomerLogin(customerLogin.get('username')) && customerLogin.get('password') === 'overlook2021') {
+        fetch(`http://localhost:3001/api/v1/customers/${checkCustomerLogin(customerLogin.get('username'))}`)
             .then(response => response.json())
             .then(response => {
                 let newCalendar = document.querySelector('#birthday')
@@ -215,7 +214,6 @@ const checkCustomerCredentials = (event) => {
                 show(projectTitle);
                 show(searchSubmit);
                 show(bookingsInfo);
-                show(welcomeMessage)
                 hide(loginForm);
                 show(logOut)
 
@@ -227,7 +225,7 @@ const checkCustomerCredentials = (event) => {
         event.target.reset();
     }
 }
-const checkCustomerIsValid = (userName) => {
+const checkCustomerLogin = (userName) => {
     let customer = userName.substring(0, 8);
     let customerId = userName.substring(8);
     if (customer === 'customer' && parseInt(customerId) < 51) {
@@ -239,4 +237,4 @@ const checkCustomerIsValid = (userName) => {
 searchRooms.addEventListener('click', filterBookingsByRoom);
 searchButton.addEventListener('click', showFilteredBookings);
 document.getElementById('login').addEventListener('submit', checkCustomerCredentials);
-logOut.addEventListener('click', removeShownBookings)
+logOut.addEventListener('click', removePageInfo)
