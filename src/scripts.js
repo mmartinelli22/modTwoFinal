@@ -31,9 +31,10 @@ const setCurrentUserBookings = (user) => {
 
 const setCurrentUserRooms = (user) => {
     const currentUserRooms = rooms.filter(room => user.bookings.some(booking => booking.roomNumber === room.number));
+    console.log('ROOOOOMS', currentUserRooms);
     user.setRooms(currentUserRooms);
 }
-const buildAuthPage = (id = 3) => {
+const buildAuthPage = (id) => {
     currentUser = users.find(user => user.id === id);
     setCurrentUserBookings(currentUser);
     setCurrentUserRooms(currentUser);
@@ -48,8 +49,8 @@ Promise.all([
     userBookings
 ]).then(([customerResponse, roomResponse, bookingsResponse]) => {
     customerResponse.customers.forEach(val => {
-        const currentUser = new User(val);
-        users.push(currentUser);
+        const eachUser = new User(val);
+        users.push(eachUser);
     });
     roomResponse.rooms.forEach(val => {
         const currentRoom = new Room(val);
@@ -63,7 +64,6 @@ Promise.all([
 })
 const getUsersCost = () => {
     let roomCost = document.querySelector('.total-rooms-cost')
-    roomCost.innerHTML = '';
     currentUser.setTotalSpent()
     roomCost.innerHTML = `Your current cost is $${currentUser.totalSpent}`
 }
@@ -81,7 +81,9 @@ const greeting = (user) => {
     greeting.innerHTML = `Hello,${user.name.split(" ")[0]}`
 }
 const removePageInfo = () => {
+    let roomCost = document.querySelector('.total-rooms-cost')
     hide(searchSubmit);
+    hide(roomCost)
     hide(projectTitle);
     hide(logOut);
     hide(searchRooms)
@@ -103,9 +105,11 @@ const showFilteredBookings = (event) => {
     let showBookings = document.querySelector('#birthday')
     let storedBookings = document.querySelector('#show-bookings')
     let newBookings = bookings.filter(booking => {
-        const buildDateString = (date) => `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+        const buildDateString = (date) => `${date.getUTCMonth() + 1}/${date.getUTCDate() + 1}/${date.getUTCFullYear()}`;
+        console.log(showBookings.value)
         const calendarDateValue = new Date(showBookings.value);
         const calendarDateString = buildDateString(calendarDateValue);
+        console.log(calendarDateString)
         const bookingDateValue = new Date(booking.date);
         const bookingDateString = buildDateString(bookingDateValue);
         return bookingDateString === calendarDateString
@@ -116,6 +120,7 @@ const showFilteredBookings = (event) => {
         storedBookings.innerText = 'Sorry, there are no rooms available on that day.'
     } else {
         storedBookings.innerHTML = '<ol> <p1 id="bookingsMessage">Possible bookings</p1>';
+        console.log(newBookings)
         newBookings.forEach(booking => {
             storedBookings.innerHTML += `<li  id = "filteredRooms">${booking.date}: Room ${booking.roomNumber}</li>`;
         })
@@ -130,16 +135,6 @@ function show(element) {
 function hide(element) {
     element.classList.add('hidden')
 }
-
-// const roomButtonHandler = (event) => {
-//     const idPrefix = 'bookingsButton';
-//     const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
-//     currentUser.removeFilteredRoom(roomNumber);
-//     buildShowRooms(currentUser.filteredRooms);
-//     addBookingByRoomNumber(roomNumber);
-//     addRoomByRoomNumber(roomNumber);
-// }
-
 const addRoomByRoomNumber = (roomNumber) => {
     const roomToAdd = rooms.find((room) => room.number === roomNumber);
     currentUser.addRoom(roomToAdd);
@@ -200,6 +195,7 @@ const checkCustomerCredentials = (event) => {
             .then(response => response.json())
             .then(response => {
                 let newCalendar = document.querySelector('#birthday')
+                let roomCost = document.querySelector('.total-rooms-cost')
                 buildAuthPage(response.id);
                 showBookings()
                 greeting(new User(response));
@@ -211,8 +207,8 @@ const checkCustomerCredentials = (event) => {
                 show(bookingsInfo);
                 hide(loginForm);
                 show(logOut)
-
-
+                getUsersCost();
+                show(roomCost);
             })
             .catch(error => console.log('ERROR: ', error));
     } else {
@@ -257,10 +253,12 @@ const bookAvailableRooms = (event) => {
         window.alert(`WOO HOO!!! You're room is booked for ${(response.newBooking.date)}!`);
         booking = new Booking(response.newBooking)
         fetchApiData('http://localhost:3001/api/v1/bookings').then(data => {
+            bookings = [];
             data.bookings.forEach(val => {
                 const currentBooking = new Booking(val);
                 bookings.push(currentBooking);
             });
+            getUsersCost();
         })
     })
     //     let letFetchPromise = fetchApiData('http://localhost:3001/api/v1/bookings');
