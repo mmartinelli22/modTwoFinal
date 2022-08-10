@@ -64,7 +64,7 @@ describe('User', () => {
         setCurrentUserBookings(user1);
         setCurrentUserRooms(user1);
         user1.setTotalSpent()
-        expect(user1.totalSpent).to.equal('5743.85');
+        expect(user1.totalSpent).to.equal('8806.73');
     })
     it('should be able to add a users booking', () => {
         user1.addBooking(booking1)
@@ -111,6 +111,6 @@ describe('User', () => {
         user1.addRoom(room2)
         user1.addRoom(booking1)
         user1.setTotalSpent()
-        expect(user1.totalSpent).to.equal('NaN')
+        expect(user1.totalSpent).to.equal('0.00')
     })
 })

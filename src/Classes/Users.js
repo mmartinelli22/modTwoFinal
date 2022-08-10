@@ -34,7 +34,14 @@ export class User {
     }
 
     setTotalSpent() {
-        this.totalSpent = this.rooms.reduce((acc, room) => (acc + room.costPerNight), 0).toFixed(2)
+        this.totalSpent = this.bookings.reduce((acc, booking) => {
+            let foundRoom = this.rooms.find(room => {
+                return room.number === booking.roomNumber
+            })
+            console.log(foundRoom)
+            acc += foundRoom.costPerNight
+            return acc;
+        }, 0).toFixed(2);
     }
 
     setFilteredBookings(bookings) {
