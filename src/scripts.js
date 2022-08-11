@@ -31,7 +31,6 @@ const setCurrentUserBookings = (user) => {
 
 const setCurrentUserRooms = (user) => {
     const currentUserRooms = rooms.filter(room => user.bookings.some(booking => booking.roomNumber === room.number));
-    console.log('ROOOOOMS', currentUserRooms);
     user.setRooms(currentUserRooms);
 }
 const buildAuthPage = (id) => {
@@ -106,10 +105,8 @@ const showFilteredBookings = (event) => {
     let storedBookings = document.querySelector('#show-bookings')
     let newBookings = bookings.filter(booking => {
         const buildDateString = (date) => `${date.getUTCMonth() + 1}/${date.getUTCDate() + 1}/${date.getUTCFullYear()}`;
-        console.log(showBookings.value)
         const calendarDateValue = new Date(showBookings.value);
         const calendarDateString = buildDateString(calendarDateValue);
-        console.log(calendarDateString)
         const bookingDateValue = new Date(booking.date);
         const bookingDateString = buildDateString(bookingDateValue);
         return bookingDateString === calendarDateString
@@ -120,7 +117,6 @@ const showFilteredBookings = (event) => {
         storedBookings.innerText = 'Sorry, there are no rooms available on that day.'
     } else {
         storedBookings.innerHTML = '<ol> <p1 id="bookingsMessage">Possible bookings</p1>';
-        console.log(newBookings)
         newBookings.forEach(booking => {
             storedBookings.innerHTML += `<li  id = "filteredRooms">${booking.date}: Room ${booking.roomNumber}</li>`;
         })
@@ -160,10 +156,6 @@ const buildShowRooms = (roomsToBuild) => {
         `
     }, '<ol>')
     showRooms.innerHTML + `</ol>`;
-    // roomsToBuild.forEach((availableRoom) => {
-    //     // let roomButton = document.querySelector(`${availableRoom.number}`)
-    // })
-    //  .addEventListener('click', roomButtonHandler)
 }
 
 const filterBookingsByRoom = (event) => {
@@ -249,7 +241,6 @@ const bookAvailableRooms = (event) => {
         roomNumber: parseInt(event.target.id)
     }
     postBookings(newBookedRoom).then(response => {
-        console.log(response)
         window.alert(`WOO HOO!!! You're room is booked for ${(response.newBooking.date)}!`);
         booking = new Booking(response.newBooking)
         fetchApiData('http://localhost:3001/api/v1/bookings').then(data => {
@@ -261,23 +252,4 @@ const bookAvailableRooms = (event) => {
             getUsersCost();
         })
     })
-    //     let letFetchPromise = fetchApiData('http://localhost:3001/api/v1/bookings');
-    //     Promise.all([postPromise, letFetchPromise])
-    //         .then(response => {
-    //             console.log(response)
-    //             window.alert(`WOO HOO!!! You're room is booked for ${(response[0].newBooking.date)}!`);
-    //             booking = new Booking(response[0].newBooking)
-    //         })
-    //         .catch(error => {
-    //             console.log(error)
-    //         })
 }
-// const getPostedRooms = (event) => {
-//     postedRoomData = new FormData(document.querySelector('.calendarForm'))
-//     let newBookedRoom = {
-//         userID: currentUser.id,
-//         date: postedRoomData.get('birthday').split('-').join('/'),
-//         roomNumber: parseInt(event.target.id)
-//     }
-//     return newBookedRoom;
-// }

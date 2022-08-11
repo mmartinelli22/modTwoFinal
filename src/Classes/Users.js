@@ -38,7 +38,6 @@ export class User {
             let foundRoom = this.rooms.find(room => {
                 return room.number === booking.roomNumber
             })
-            console.log(foundRoom)
             acc += foundRoom.costPerNight
             return acc;
         }, 0).toFixed(2);
