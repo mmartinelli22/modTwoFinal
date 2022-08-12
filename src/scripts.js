@@ -111,14 +111,16 @@ const showFilteredBookings = (event) => {
         const bookingDateString = buildDateString(bookingDateValue);
         return bookingDateString === calendarDateString
     })
-
+    let filteredRooms = rooms.filter(room => !newBookings.some(newBooking => newBooking.roomNumber === room.number))
     currentUser.filteredBookings = newBookings;
-    if (!currentUser.filteredBookings.length) {
+    currentUser.setFilterUnbookedRooms(filteredRooms)
+
+    if (!currentUser.filterUnbookedRooms.length) {
         storedBookings.innerText = 'Sorry, there are no rooms available on that day.'
     } else {
         storedBookings.innerHTML = '<ol> <p1 id="bookingsMessage">Possible bookings</p1>';
-        newBookings.forEach(booking => {
-            storedBookings.innerHTML += `<li  id = "filteredRooms">${booking.date}: Room ${booking.roomNumber}</li>`;
+        filteredRooms.forEach(room => {
+            storedBookings.innerHTML += `<li  id = "filteredRooms">Room ${room.number}</li>`;
         })
         storedBookings.innerHTML += '</ol>';
         show(searchRooms)
@@ -162,9 +164,9 @@ const filterBookingsByRoom = (event) => {
     event.preventDefault();
     showRooms.innerHTML = '';
     const currentRoom = roomTypeDropDown.value ?? '';
-    const filteredRooms = rooms.filter(room => currentUser.filteredBookings
-        .some(booking => booking.roomNumber === room.number))
-        .filter(room => room.roomType === currentRoom);
+    console.log(currentUser.filterUnbookedRooms);
+    const filteredRooms = currentUser.filterUnbookedRooms.filter(room => room.roomType === currentRoom)
+    console.log(filteredRooms)
     currentUser.setFilteredRooms(filteredRooms);
     if (currentUser.filteredRooms.length > 0) {
         buildShowRooms(currentUser.filteredRooms);
@@ -192,7 +194,6 @@ const checkCustomerCredentials = (event) => {
                 showBookings()
                 greeting(new User(response));
                 show(bookingsInfo, hideGrid, bookingGrid, ourRooms)
-                showBookings();
                 giveDisplay(newCalendar)
                 show(projectTitle);
                 show(searchSubmit);
@@ -249,7 +250,20 @@ const bookAvailableRooms = (event) => {
                 const currentBooking = new Booking(val);
                 bookings.push(currentBooking);
             });
+            ourRooms.addEventListener('click', function (event) {
+                const idPrefix = 'bookingsButton';
+                const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
+                console.log(response)
+                currentUser.removeFilteredRoom(response.newBooking.roomNumber);
+                buildShowRooms(currentUser.filteredRooms);
+                addBookingByRoomNumber(response.newBooking.roomNumber);
+                addRoomByRoomNumber(response.newBooking.roomNumber);
+                if (event.target.classList == 'bookings-button') {
+                    return bookAvailableRooms(event)
+                }
+            })
             getUsersCost();
+            showBookings();
         })
     })
 }
