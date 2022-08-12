@@ -7,10 +7,6 @@
    font-family: 'Courier New', Courier, monospace;
  }
 
- /* .total-rooms-cost {
-   display: none;
- } */
-
  .booking-grid {
    display: flex;
    flex-wrap: wrap;

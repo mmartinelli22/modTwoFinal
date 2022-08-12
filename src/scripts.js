@@ -18,7 +18,7 @@ let showRooms = document.querySelector('#showRooms')
 let bookingsInfo = document.querySelector('#show-bookings')
 let hideGrid = document.querySelector('.grid')
 let bookingGrid = document.querySelector('.booking-grid')
-let ourRooms = document.querySelector('.filteredRooms')
+let ourRooms = document.querySelector('.filtered\Rooms')
 let projectTitle = document.querySelector('#title')
 let searchSubmit = document.querySelector('#booking-search')
 let loginForm = document.querySelector('#login')
@@ -146,6 +146,7 @@ const addBookingByRoomNumber = (roomNumber) => {
 }
 
 const buildShowRooms = (roomsToBuild) => {
+    console.log(roomsToBuild)
     showRooms.innerHTML = roomsToBuild.reduce((acc, availableRoom) => {
         return `${acc}
             <li id="${availableRoom.number}">Number of beds:${availableRoom.numBeds}
@@ -154,10 +155,18 @@ const buildShowRooms = (roomsToBuild) => {
             Size of Beds:${availableRoom.bedSize},
             Does it have a bidet?:${availableRoom.bidet},
             Room Number:${availableRoom.number}
-            </li><input type='submit' value ='add-to-booking' name ='add-booking' class ='bookings-button' id ="${availableRoom.number}" ></input>
-        `
+            </li><input type='submit' value ='add-to-booking' name ='add-booking' class ='bookings-button' id="room-${availableRoom.number}" ></input>
+                 `
     }, '<ol>')
+    console.log(roomsToBuild)
     showRooms.innerHTML + `</ol>`;
+    roomsToBuild.forEach(room => {
+        const currentButton = document.querySelector(`#room-${room.number}`);
+        console.log(currentButton)
+        currentButton.addEventListener('click', bookAvailableRooms);
+
+    })
+    //foreach add eevent listener room.number
 }
 
 const filterBookingsByRoom = (event) => {
@@ -166,7 +175,6 @@ const filterBookingsByRoom = (event) => {
     const currentRoom = roomTypeDropDown.value ?? '';
     console.log(currentUser.filterUnbookedRooms);
     const filteredRooms = currentUser.filterUnbookedRooms.filter(room => room.roomType === currentRoom)
-    console.log(filteredRooms)
     currentUser.setFilteredRooms(filteredRooms);
     if (currentUser.filteredRooms.length > 0) {
         buildShowRooms(currentUser.filteredRooms);
@@ -222,24 +230,26 @@ searchRooms.addEventListener('click', filterBookingsByRoom);
 searchButton.addEventListener('click', showFilteredBookings);
 document.getElementById('login').addEventListener('submit', checkCustomerCredentials);
 logOut.addEventListener('click', removePageInfo)
-ourRooms.addEventListener('click', function (event) {
-    const idPrefix = 'bookingsButton';
-    const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
-    currentUser.removeFilteredRoom(roomNumber);
-    buildShowRooms(currentUser.filteredRooms);
-    addBookingByRoomNumber(roomNumber);
-    addRoomByRoomNumber(roomNumber);
-    if (event.target.classList == 'bookings-button') {
-        return bookAvailableRooms(event)
-    }
-})
+// ourRooms.addEventListener('click', function (event) {
+//     const idPrefix = 'bookingsButton';
+//     const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
+//     currentUser.removeFilteredRoom(roomNumber);
+//     buildShowRooms(currentUser.filteredRooms);
+//     addBookingByRoomNumber(roomNumber);
+//     addRoomByRoomNumber(roomNumber);
+//     if (event.target.classList == 'bookings-button') {
+//         return bookAvailableRooms(event)
+//     }
+// })
 const bookAvailableRooms = (event) => {
     event.preventDefault()
     postedRoomData = new FormData(document.querySelector('.calendarForm'))
+    const idPrefix = 'room-';
+    const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
     let newBookedRoom = {
         userID: currentUser.id,
         date: postedRoomData.get('birthday').split('-').join('/'),
-        roomNumber: parseInt(event.target.id)
+        roomNumber
     }
     postBookings(newBookedRoom).then(response => {
         window.alert(`WOO HOO!!! You're room is booked for ${(response.newBooking.date)}!`);
@@ -250,18 +260,10 @@ const bookAvailableRooms = (event) => {
                 const currentBooking = new Booking(val);
                 bookings.push(currentBooking);
             });
-            ourRooms.addEventListener('click', function (event) {
-                const idPrefix = 'bookingsButton';
-                const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
-                console.log(response)
-                currentUser.removeFilteredRoom(response.newBooking.roomNumber);
-                buildShowRooms(currentUser.filteredRooms);
-                addBookingByRoomNumber(response.newBooking.roomNumber);
-                addRoomByRoomNumber(response.newBooking.roomNumber);
-                if (event.target.classList == 'bookings-button') {
-                    return bookAvailableRooms(event)
-                }
-            })
+            currentUser.removeFilteredRoom(roomNumber);
+            buildShowRooms(currentUser.filteredRooms);
+            setCurrentUserBookings(currentUser);
+            setCurrentUserRooms(currentUser);
             getUsersCost();
             showBookings();
         })
