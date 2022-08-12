@@ -18,7 +18,7 @@ let showRooms = document.querySelector('#showRooms')
 let bookingsInfo = document.querySelector('#show-bookings')
 let hideGrid = document.querySelector('.grid')
 let bookingGrid = document.querySelector('.booking-grid')
-let ourRooms = document.querySelector('.filteredRooms')
+let ourRooms = document.querySelector('.filtered\Rooms')
 let projectTitle = document.querySelector('#title')
 let searchSubmit = document.querySelector('#booking-search')
 let loginForm = document.querySelector('#login')
@@ -31,7 +31,6 @@ const setCurrentUserBookings = (user) => {
 
 const setCurrentUserRooms = (user) => {
     const currentUserRooms = rooms.filter(room => user.bookings.some(booking => booking.roomNumber === room.number));
-    console.log('ROOOOOMS', currentUserRooms);
     user.setRooms(currentUserRooms);
 }
 const buildAuthPage = (id) => {
@@ -106,23 +105,22 @@ const showFilteredBookings = (event) => {
     let storedBookings = document.querySelector('#show-bookings')
     let newBookings = bookings.filter(booking => {
         const buildDateString = (date) => `${date.getUTCMonth() + 1}/${date.getUTCDate() + 1}/${date.getUTCFullYear()}`;
-        console.log(showBookings.value)
         const calendarDateValue = new Date(showBookings.value);
         const calendarDateString = buildDateString(calendarDateValue);
-        console.log(calendarDateString)
         const bookingDateValue = new Date(booking.date);
         const bookingDateString = buildDateString(bookingDateValue);
         return bookingDateString === calendarDateString
     })
-
+    let filteredRooms = rooms.filter(room => !newBookings.some(newBooking => newBooking.roomNumber === room.number))
     currentUser.filteredBookings = newBookings;
-    if (!currentUser.filteredBookings.length) {
+    currentUser.setFilterUnbookedRooms(filteredRooms)
+
+    if (!currentUser.filterUnbookedRooms.length) {
         storedBookings.innerText = 'Sorry, there are no rooms available on that day.'
     } else {
         storedBookings.innerHTML = '<ol> <p1 id="bookingsMessage">Possible bookings</p1>';
-        console.log(newBookings)
-        newBookings.forEach(booking => {
-            storedBookings.innerHTML += `<li  id = "filteredRooms">${booking.date}: Room ${booking.roomNumber}</li>`;
+        filteredRooms.forEach(room => {
+            storedBookings.innerHTML += `<li  id = "filteredRooms">Room ${room.number}</li>`;
         })
         storedBookings.innerHTML += '</ol>';
         show(searchRooms)
@@ -148,6 +146,7 @@ const addBookingByRoomNumber = (roomNumber) => {
 }
 
 const buildShowRooms = (roomsToBuild) => {
+    console.log(roomsToBuild)
     showRooms.innerHTML = roomsToBuild.reduce((acc, availableRoom) => {
         return `${acc}
             <li id="${availableRoom.number}">Number of beds:${availableRoom.numBeds}
@@ -156,23 +155,26 @@ const buildShowRooms = (roomsToBuild) => {
             Size of Beds:${availableRoom.bedSize},
             Does it have a bidet?:${availableRoom.bidet},
             Room Number:${availableRoom.number}
-            </li><input type='submit' value ='add-to-booking' name ='add-booking' class ='bookings-button' id ="${availableRoom.number}" ></input>
-        `
+            </li><input type='submit' value ='add-to-booking' name ='add-booking' class ='bookings-button' id="room-${availableRoom.number}" ></input>
+                 `
     }, '<ol>')
+    console.log(roomsToBuild)
     showRooms.innerHTML + `</ol>`;
-    // roomsToBuild.forEach((availableRoom) => {
-    //     // let roomButton = document.querySelector(`${availableRoom.number}`)
-    // })
-    //  .addEventListener('click', roomButtonHandler)
+    roomsToBuild.forEach(room => {
+        const currentButton = document.querySelector(`#room-${room.number}`);
+        console.log(currentButton)
+        currentButton.addEventListener('click', bookAvailableRooms);
+
+    })
+    //foreach add eevent listener room.number
 }
 
 const filterBookingsByRoom = (event) => {
     event.preventDefault();
     showRooms.innerHTML = '';
     const currentRoom = roomTypeDropDown.value ?? '';
-    const filteredRooms = rooms.filter(room => currentUser.filteredBookings
-        .some(booking => booking.roomNumber === room.number))
-        .filter(room => room.roomType === currentRoom);
+    console.log(currentUser.filterUnbookedRooms);
+    const filteredRooms = currentUser.filterUnbookedRooms.filter(room => room.roomType === currentRoom)
     currentUser.setFilteredRooms(filteredRooms);
     if (currentUser.filteredRooms.length > 0) {
         buildShowRooms(currentUser.filteredRooms);
@@ -200,7 +202,6 @@ const checkCustomerCredentials = (event) => {
                 showBookings()
                 greeting(new User(response));
                 show(bookingsInfo, hideGrid, bookingGrid, ourRooms)
-                showBookings();
                 giveDisplay(newCalendar)
                 show(projectTitle);
                 show(searchSubmit);
@@ -229,27 +230,28 @@ searchRooms.addEventListener('click', filterBookingsByRoom);
 searchButton.addEventListener('click', showFilteredBookings);
 document.getElementById('login').addEventListener('submit', checkCustomerCredentials);
 logOut.addEventListener('click', removePageInfo)
-ourRooms.addEventListener('click', function (event) {
-    const idPrefix = 'bookingsButton';
-    const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
-    currentUser.removeFilteredRoom(roomNumber);
-    buildShowRooms(currentUser.filteredRooms);
-    addBookingByRoomNumber(roomNumber);
-    addRoomByRoomNumber(roomNumber);
-    if (event.target.classList == 'bookings-button') {
-        return bookAvailableRooms(event)
-    }
-})
+// ourRooms.addEventListener('click', function (event) {
+//     const idPrefix = 'bookingsButton';
+//     const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
+//     currentUser.removeFilteredRoom(roomNumber);
+//     buildShowRooms(currentUser.filteredRooms);
+//     addBookingByRoomNumber(roomNumber);
+//     addRoomByRoomNumber(roomNumber);
+//     if (event.target.classList == 'bookings-button') {
+//         return bookAvailableRooms(event)
+//     }
+// })
 const bookAvailableRooms = (event) => {
     event.preventDefault()
     postedRoomData = new FormData(document.querySelector('.calendarForm'))
+    const idPrefix = 'room-';
+    const roomNumber = parseInt(event.target.id.replace(idPrefix, ''), 10);
     let newBookedRoom = {
         userID: currentUser.id,
         date: postedRoomData.get('birthday').split('-').join('/'),
-        roomNumber: parseInt(event.target.id)
+        roomNumber
     }
     postBookings(newBookedRoom).then(response => {
-        console.log(response)
         window.alert(`WOO HOO!!! You're room is booked for ${(response.newBooking.date)}!`);
         booking = new Booking(response.newBooking)
         fetchApiData('http://localhost:3001/api/v1/bookings').then(data => {
@@ -258,26 +260,12 @@ const bookAvailableRooms = (event) => {
                 const currentBooking = new Booking(val);
                 bookings.push(currentBooking);
             });
+            currentUser.removeFilteredRoom(roomNumber);
+            buildShowRooms(currentUser.filteredRooms);
+            setCurrentUserBookings(currentUser);
+            setCurrentUserRooms(currentUser);
             getUsersCost();
+            showBookings();
         })
     })
-    //     let letFetchPromise = fetchApiData('http://localhost:3001/api/v1/bookings');
-    //     Promise.all([postPromise, letFetchPromise])
-    //         .then(response => {
-    //             console.log(response)
-    //             window.alert(`WOO HOO!!! You're room is booked for ${(response[0].newBooking.date)}!`);
-    //             booking = new Booking(response[0].newBooking)
-    //         })
-    //         .catch(error => {
-    //             console.log(error)
-    //         })
 }
-// const getPostedRooms = (event) => {
-//     postedRoomData = new FormData(document.querySelector('.calendarForm'))
-//     let newBookedRoom = {
-//         userID: currentUser.id,
-//         date: postedRoomData.get('birthday').split('-').join('/'),
-//         roomNumber: parseInt(event.target.id)
-//     }
-//     return newBookedRoom;
-// }

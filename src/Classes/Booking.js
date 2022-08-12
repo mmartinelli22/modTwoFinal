@@ -6,8 +6,4 @@ export class Booking {
         this.date = bookingData.date;
         this.roomNumber = bookingData.roomNumber;
     }
-    // getRoomDetailsFromBookings(roomsData) {
-    //     let roomAndBookingMatch = roomsData.find(room => room.number === this.roomNumber);
-    //     this.roomDetails = new Room(roomAndBookingMatch);
-    // }
 }

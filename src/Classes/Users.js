@@ -7,10 +7,14 @@ export class User {
         this.totalSpent = 0;
         this.filteredBookings = [];
         this.filteredRooms = [];
+        this.filterUnbookedRooms = [];
     }
 
     setBookings(bookings) {
         this.bookings = bookings;
+    }
+    setFilterUnbookedRooms(rooms) {
+        this.filterUnbookedRooms = rooms;
     }
 
     addBooking(booking) {
@@ -38,7 +42,6 @@ export class User {
             let foundRoom = this.rooms.find(room => {
                 return room.number === booking.roomNumber
             })
-            console.log(foundRoom)
             acc += foundRoom.costPerNight
             return acc;
         }, 0).toFixed(2);
@@ -47,7 +50,7 @@ export class User {
     setFilteredBookings(bookings) {
         this.filteredBookings = bookings;
     }
-
+    //filter room =>room.some(roomnNumber bookings.rooms === roomNumber)
     setFilteredRooms(rooms) {
         this.filteredRooms = rooms;
     }
